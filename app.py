@@ -87,8 +87,42 @@ def show_months(months):
     dots=["●" if i in months else "·" for i in range(1,13)]
     st.code("  ".join(MONTHS_HE)+"\n"+"   ".join(dots))
 
-st.title(TITLE)
-st.caption(SUBTITLE)
+def card(title, content, months=None):
+    months_html = ""
+    if months:
+        month_names = ["ינו","פבר","מרץ","אפר","מאי","יונ","יול","אוג","ספט","אוק","נוב","דצמ"]
+        dots = "".join([
+            f"<span style='color:#2f6f3e;font-size:22px'>{'●' if i+1 in months else '○'}</span> "
+            for i in range(12)
+        ])
+        months_html = f"""
+        <div style='margin-top:10px'>
+            <div style='font-size:14px'>{' '.join(month_names)}</div>
+            <div>{dots}</div>
+        </div>
+        """
+
+    st.markdown(f"""
+    <div style="
+        background-color:#f6fbf7;
+        padding:20px;
+        border-radius:15px;
+        margin-bottom:18px;
+        border:1px solid #d8eadc;
+    ">
+        <h3>{title}</h3>
+        <div style="font-size:18px">{content}</div>
+        {months_html}
+    </div>
+    """, unsafe_allow_html=True)
+
+
+
+st.markdown(f"""
+<h1 style='text-align:center'>{TITLE}</h1>
+<p style='text-align:center;font-size:20px'>{SUBTITLE}</p>
+""", unsafe_allow_html=True)
+
 
 df=load_data()
 df=df[df["שם הצמח"].notna()]
@@ -103,26 +137,34 @@ if not plant:
 row=df[df["שם הצמח"]==plant].iloc[0]
 st.header(plant)
 
-st.subheader("שיוך")
-categories=["עץ","שיח","בן שיח","מטפס","עשבוני","מושך חיות","עץ מאכל","ירקות קיץ","ירקות חורף","בצלים ופקעות","תיבול ומרפא"]
-tags=[c for c in categories if c in row and is_marked(row[c])]
-st.write(" · ".join(tags) if tags else "—")
+categories = ["עץ","שיח","בן שיח","מטפס","עשבוני","מושך חיות","עץ מאכל","ירקות קיץ","ירקות חורף","בצלים ופקעות","תיבול ומרפא"]
+tags = [c for c in categories if c in row and is_marked(row[c])]
+card("שיוך", " · ".join(tags) if tags else "אין מידע")
 
-st.subheader("ריבוי וגטטיבי")
-st.write("חלוקה:", "כן" if is_marked(row.get("ריבוי בחלוקה")) else "לא")
-st.write("שלוחות:", "כן" if is_marked(row.get("ריבוי בשלוחות")) else "לא")
 
-st.subheader("ריבוי מזרעים")
-show_months(get_months(row,"זרעים"))
-st.write("טרי:", "כן" if is_marked(row.get("טרי")) else "לא")
-st.write("יבש:", "כן" if is_marked(row.get("יבש")) else "לא")
+veg = f"""
+חלוקה: {"כן" if is_marked(row.get("ריבוי בחלוקה")) else "לא"}<br>
+שלוחות: {"כן" if is_marked(row.get("ריבוי בשלוחות")) else "לא"}
+"""
+card("ריבוי וגטטיבי", veg)
+
+
+seed_text = f"""
+טרי: {"כן" if is_marked(row.get("טרי")) else "לא"}<br>
+יבש: {"כן" if is_marked(row.get("יבש")) else "לא"}
+"""
 if is_marked(row.get("טיפול")):
-    st.write("טיפול:",row["טיפול"])
+    seed_text += f"<br>טיפול: {row['טיפול']}"
 
-st.subheader("ריבוי מייחורים")
-show_months(get_months(row,"ייחורים"))
+seed_months = get_months(row,"זרעים")
+card("ריבוי מזרעים", seed_text, seed_months)
+
+
 types=[t for t in ["מעוצה","קודקודי","עשבוני","עלה"] if is_marked(row.get(t))]
-st.write(" · ".join(types) if types else "—")
+cut_months = get_months(row,"ייחורים")
+card("ריבוי מייחורים", " · ".join(types) if types else "אין מידע", cut_months)
+
+
 
 def show_value(v):
     if v is None: return "לא ידוע"
