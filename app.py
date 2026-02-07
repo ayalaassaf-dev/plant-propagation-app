@@ -4,6 +4,30 @@ import streamlit as st
 
 st.set_page_config(page_title="טבלת ריבוי צמחים", layout="centered")
 
+# ===== עיצוב כללי + עברית =====
+st.markdown("""
+<style>
+html, body, [class*="css"]  {
+    direction: rtl;
+    text-align: right;
+    font-family: "Assistant", "Heebo", sans-serif;
+}
+
+.stSelectbox label {
+    text-align:right;
+}
+
+.block-container {
+    padding-top: 2rem;
+}
+
+h1, h2, h3 {
+    color:#2f6f3e;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
 CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGk2pn1I3JZjuhLZbIEWrMfMN02EV_kxuZl2Q3sWxMiRlvLekN-xucADwoy6x9fg/pub?gid=570603705&single=true&output=csv"
 
 TITLE = "טבלת ריבוי צמחים"
