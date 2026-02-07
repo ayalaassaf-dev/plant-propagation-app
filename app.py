@@ -75,24 +75,30 @@ def load_data():
     df.columns = [str(c).strip() for c in df.columns]
     return df
 
-def get_months(row, prefix):
-    months=[]
-    for i in range(1,13):
-        col=f"{prefix} {i}"
-        if col in row and is_marked(row[col]):
-            months.append(i)
-    return months
+
 
 def show_months(months):
     dots=["●" if i in months else "·" for i in range(1,13)]
     st.code("  ".join(MONTHS_HE)+"\n"+"   ".join(dots))
 
+import html
+
 def card(title, content, months=None):
+    # הגנה – שלא יהיו תווים ששוברים HTML
+    safe_title = html.escape(str(title))
+    safe_content = html.escape(str(content)).replace("&lt;br&gt;", "<br>")
+
+    # הגנה – months תמיד רשימה
+    try:
+        months = [int(x) for x in (months or [])]
+    except Exception:
+        months = []
+
     months_html = ""
-    if months:
+    if len(months) > 0:
         month_names = ["ינו","פבר","מרץ","אפר","מאי","יונ","יול","אוג","ספט","אוק","נוב","דצמ"]
         dots = "".join([
-            f"<span style='color:#2f6f3e;font-size:22px'>{'●' if i+1 in months else '○'}</span> "
+            f"<span style='color:#2f6f3e;font-size:22px'>{'●' if (i+1) in months else '○'}</span> "
             for i in range(12)
         ])
         months_html = f"""
@@ -110,8 +116,8 @@ def card(title, content, months=None):
         margin-bottom:18px;
         border:1px solid #d8eadc;
     ">
-        <h3>{title}</h3>
-        <div style="font-size:18px">{content}</div>
+        <h3>{safe_title}</h3>
+        <div style="font-size:18px">{safe_content}</div>
         {months_html}
     </div>
     """, unsafe_allow_html=True)
