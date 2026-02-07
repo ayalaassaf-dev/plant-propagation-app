@@ -4,6 +4,59 @@ import streamlit as st
 
 st.set_page_config(page_title="טבלת ריבוי צמחים", layout="centered")
 
+st.markdown("""
+<style>
+/* כיוון כתיבה + יישור */
+html, body, .stApp, .main, .block-container {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+/* טקסטים וכותרות */
+h1, h2, h3, h4, h5, h6, p, li, div, span, label {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+/* שדה בחירה / חיפוש */
+[data-baseweb="select"] * {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+/* תיבת טקסט/חיפוש אם תשתמשי בה */
+input, textarea {
+  direction: rtl !important;
+  text-align: right !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
+# ===== עיצוב כללי + עברית =====
+st.markdown("""
+<style>
+html, body, [class*="css"]  {
+    direction: rtl;
+    text-align: right;
+    font-family: "Assistant", "Heebo", sans-serif;
+}
+
+.stSelectbox label {
+    text-align:right;
+}
+
+.block-container {
+    padding-top: 2rem;
+}
+
+h1, h2, h3 {
+    color:#2f6f3e;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
 CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGk2pn1I3JZjuhLZbIEWrMfMN02EV_kxuZl2Q3sWxMiRlvLekN-xucADwoy6x9fg/pub?gid=570603705&single=true&output=csv"
 
 TITLE = "טבלת ריבוי צמחים"
@@ -56,13 +109,13 @@ tags=[c for c in categories if c in row and is_marked(row[c])]
 st.write(" · ".join(tags) if tags else "—")
 
 st.subheader("ריבוי וגטטיבי")
-st.write("חלוקה:", "כן" if is_marked(row.get("ריבוי בחלוקה")) else "—")
-st.write("שלוחות:", "כן" if is_marked(row.get("ריבוי בשלוחות")) else "—")
+st.write("חלוקה:", "כן" if is_marked(row.get("ריבוי בחלוקה")) else "לא")
+st.write("שלוחות:", "כן" if is_marked(row.get("ריבוי בשלוחות")) else "לא")
 
 st.subheader("ריבוי מזרעים")
 show_months(get_months(row,"זרעים"))
-st.write("טרי:", "כן" if is_marked(row.get("טרי")) else "—")
-st.write("יבש:", "כן" if is_marked(row.get("יבש")) else "—")
+st.write("טרי:", "כן" if is_marked(row.get("טרי")) else "לא")
+st.write("יבש:", "כן" if is_marked(row.get("יבש")) else "לא")
 if is_marked(row.get("טיפול")):
     st.write("טיפול:",row["טיפול"])
 
@@ -71,9 +124,14 @@ show_months(get_months(row,"ייחורים"))
 types=[t for t in ["מעוצה","קודקודי","עשבוני","עלה"] if is_marked(row.get(t))]
 st.write(" · ".join(types) if types else "—")
 
-st.subheader("תנאי גידול")
-st.write("השקיה:",row.get("השקיה","—"))
-st.write("אור:",row.get("אור","—"))
-st.write("ריח:",row.get("ריח","—"))
+def show_value(v):
+    if v is None: return "לא ידוע"
+    s=str(v).strip()
+    return s if s else "לא ידוע"
+
+st.write("השקיה:", show_value(row.get("השקיה")))
+st.write("אור:", show_value(row.get("אור")))
+st.write("ריח:", show_value(row.get("ריח")))
+
 
 st.caption(CREDIT)
