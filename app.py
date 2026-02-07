@@ -147,8 +147,6 @@ st.write("יבש:", "כן" if has_value(row.get("יבש")) else "לא")
 if has_value(row.get("טיפול")):
     st.write("טיפול:",row["טיפול"])
 
-if has_value(row.get("טיפול")):
-    st.write("טיפול:", row["טיפול"])
 
 st.subheader("ריבוי מייחורים")
 show_months(get_months(row,"ייחורים"))
