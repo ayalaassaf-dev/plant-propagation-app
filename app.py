@@ -84,10 +84,36 @@ def get_months(row, prefix):
             months.append(i)
     return months
 
+#החלפת פונקצית חודשים כדי שהסימון יהיה קריא יותר 
 
 def show_months(months):
-    dots=["●" if i in months else "·" for i in range(1,13)]
-    st.code("  ".join(MONTHS_HE)+"\n"+"   ".join(dots))
+    symbols = ["✔" if i in months else "✖" for i in range(1, 13)]
+
+    header = "".join([
+        f"<th style='border:1px solid #ccc; padding:6px 8px; text-align:center; background:#f7f7f7;'>{m}</th>"
+        for m in MONTHS_HE
+    ])
+
+    row = "".join([
+        f"<td style='border:1px solid #ccc; padding:6px 8px; text-align:center; font-size:18px;"
+        f" color:{'#2f9e44' if s=='✔' else '#e03131'};'>{s}</td>"
+        for s in symbols
+    ])
+
+    st.markdown(f"""
+    <div dir="rtl" style="width:100%; overflow-x:auto;">
+      <table style="border-collapse:collapse; margin-top:6px;">
+        <tr>{header}</tr>
+        <tr>{row}</tr>
+      </table>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+
+#def show_months(months):
+#    dots=["●" if i in months else "·" for i in range(1,13)]
+#    st.code("  ".join(MONTHS_HE)+"\n"+"   ".join(dots))
 
 """
 קטע שהוספתי כדי שתהיה הבחנה בין סוגי הייחורים הרלבנטים בחודשי השנה
