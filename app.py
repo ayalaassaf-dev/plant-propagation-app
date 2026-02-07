@@ -241,30 +241,51 @@ if has_value(row.get("טיפול לפני זריעה")):
 #st.write(" · ".join(types) if types else "—")
 
 
+# st.subheader("ריבוי מייחורים")
+
+# # מציג אילו סוגים רלוונטיים לצמח
+# types = [t for t in ["מעוצה", "קודקודי", "עלה"] if has_value(row.get(t))]
+# st.write("סוגי ייחורים רלוונטיים:", " · ".join(types) if types else "—")
+
+# # מציג חודשים לפי סוג, לפי הסימונים בעמודות החודשיות (*/מ/ק/ע)
+# months_by_type = get_cuttings_by_type(row, "ייחורים")
+
+# #st.markdown("**חודשים לפי סוג ייחור:**")
+# #for t, months in months_by_type.items():
+#  #   st.write(f"{t}:")
+#  #   show_months(months)
+
+# # אם אין בכלל חודשים לשום סוג – נכתוב הודעה
+# if not any(months for months in months_by_type.values()):
+#     st.info("לא ניתן לריבוי מייחורים")
+# else:
+#     st.markdown("**חודשים לפי סוג ייחור:**")
+#     for t, months in months_by_type.items():
+#         if months:  # מציגים רק סוגים שבאמת יש להם חודשים
+#             st.write(f"{t}:")
+#             show_months(months)
+
 st.subheader("ריבוי מייחורים")
 
-# מציג אילו סוגים רלוונטיים לצמח
+# סוגי ייחורים שסומנו כרלוונטיים לצמח (אם קיימים בגיליון)
 types = [t for t in ["מעוצה", "קודקודי", "עלה"] if has_value(row.get(t))]
-st.write("סוגי ייחורים רלוונטיים:", " · ".join(types) if types else "—")
 
-# מציג חודשים לפי סוג, לפי הסימונים בעמודות החודשיות (*/מ/ק/ע)
+# חודשים לפי סוג, לפי הסימונים בעמודות החודשיות (*/מ/ק/ע)
 months_by_type = get_cuttings_by_type(row, "ייחורים")
-
-#st.markdown("**חודשים לפי סוג ייחור:**")
-#for t, months in months_by_type.items():
- #   st.write(f"{t}:")
- #   show_months(months)
 
 # אם אין בכלל חודשים לשום סוג – נכתוב הודעה
 if not any(months for months in months_by_type.values()):
     st.info("לא ניתן לריבוי מייחורים")
 else:
+    # מציגים שורת סוגים רק אם באמת יש רשימה (בלי קו)
+    if types:
+        st.write("סוגי ייחורים רלוונטיים:", " · ".join(types))
+
     st.markdown("**חודשים לפי סוג ייחור:**")
     for t, months in months_by_type.items():
         if months:  # מציגים רק סוגים שבאמת יש להם חודשים
             st.write(f"{t}:")
             show_months(months)
-
 
 
 #סוף הבלוק החדש במקום הקוד הישן של ייחורים
