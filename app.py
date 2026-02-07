@@ -4,6 +4,35 @@ import streamlit as st
 
 st.set_page_config(page_title="טבלת ריבוי צמחים", layout="centered")
 
+st.markdown("""
+<style>
+/* כיוון כתיבה + יישור */
+html, body, .stApp, .main, .block-container {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+/* טקסטים וכותרות */
+h1, h2, h3, h4, h5, h6, p, li, div, span, label {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+/* שדה בחירה / חיפוש */
+[data-baseweb="select"] * {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+/* תיבת טקסט/חיפוש אם תשתמשי בה */
+input, textarea {
+  direction: rtl !important;
+  text-align: right !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
 # ===== עיצוב כללי + עברית =====
 st.markdown("""
 <style>
