@@ -219,9 +219,22 @@ if has_value(row.get("תכונות מיוחדות/הערות")):
     st.caption("תכונות מיוחדות/הערות: " + str(row["תכונות מיוחדות/הערות"]).strip())
 
 
+# st.subheader("ריבוי וגטטיבי")
+# st.write("חלוקה:", "כן" if has_value(row.get("ריבוי בחלוקה")) else "לא")
+# st.write("שלוחות:", "כן" if has_value(row.get("ריבוי בשלוחות")) else "לא")
+
 st.subheader("ריבוי וגטטיבי")
-st.write("חלוקה:", "כן" if has_value(row.get("ריבוי בחלוקה")) else "לא")
-st.write("שלוחות:", "כן" if has_value(row.get("ריבוי בשלוחות")) else "לא")
+
+if has_value(row.get("ריבוי בחלוקה")):
+    st.write("חלוקה: כן")
+else:
+    st.info("לא ניתן לריבוי ע״י חלוקה")
+
+if has_value(row.get("ריבוי בשלוחות")):
+    st.write("שלוחות: כן")
+else:
+    st.info("לא ניתן לריבוי משלוחות")
+
 
 st.subheader("ריבוי מזרעים")
 show_months(get_months(row,"זרעים"))
