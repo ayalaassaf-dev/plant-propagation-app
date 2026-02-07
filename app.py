@@ -224,13 +224,24 @@ st.write("סוגי ייחורים רלוונטיים:", " · ".join(types) if ty
 # מציג חודשים לפי סוג, לפי הסימונים בעמודות החודשיות (*/מ/ק/ע)
 months_by_type = get_cuttings_by_type(row, "ייחורים")
 
-st.markdown("**חודשים לפי סוג ייחור:**")
-for t, months in months_by_type.items():
-    st.write(f"{t}:")
-    show_months(months)
+#st.markdown("**חודשים לפי סוג ייחור:**")
+#for t, months in months_by_type.items():
+ #   st.write(f"{t}:")
+ #   show_months(months)
+
+# אם אין בכלל חודשים לשום סוג – נכתוב הודעה
+if not any(months for months in months_by_type.values()):
+    st.info("לא ניתן לריבוי מייחורים")
+else:
+    st.markdown("**חודשים לפי סוג ייחור:**")
+    for t, months in months_by_type.items():
+        if months:  # מציגים רק סוגים שבאמת יש להם חודשים
+            st.write(f"{t}:")
+            show_months(months)
 
 
-#סוף ההבלוק החדש במקום הקוד הישן של ייחורים
+
+#סוף הבלוק החדש במקום הקוד הישן של ייחורים
 
 
 def show_value(v):
