@@ -65,23 +65,25 @@ CREDIT = "המידע נאסף ע״י בועז שחם · האפליקציה הו�
 
 MONTHS_HE = ["ינו","פבר","מרץ","אפר","מאי","יונ","יול","אוג","ספט","אוק","נוב","דצמ"]
 
-def is_marked(v):
-    if v is None: return False
-    s = str(v).strip()
-    return s != "" and s.lower() not in ("nan","none")
+def has_value(v):
+    return str(v).strip() != ""
+
 
 def load_data():
     df = pd.read_csv(CSV_URL)
     df.columns = [str(c).strip() for c in df.columns]
+    df = df.fillna("")   # ← זה גורם לכך שכל NaN יהפוך לתא ריק אמיתי NaN.!
     return df
+
 
 def get_months(row, prefix):
     months=[]
     for i in range(1,13):
         col=f"{prefix} {i}"
-        if col in row and is_marked(row[col]):
+        if col in row and has_value(row[col]):
             months.append(i)
     return months
+
 
 def show_months(months):
     dots=["●" if i in months else "·" for i in range(1,13)]
@@ -105,23 +107,26 @@ st.header(plant)
 
 st.subheader("שיוך")
 categories=["עץ","שיח","בן שיח","מטפס","עשבוני","מושך חיות","עץ מאכל","ירקות קיץ","ירקות חורף","בצלים ופקעות","תיבול ומרפא"]
-tags=[c for c in categories if c in row and is_marked(row[c])]
+tags=[c for c in categories if c in row and has_value(row[c])]
 st.write(" · ".join(tags) if tags else "—")
 
 st.subheader("ריבוי וגטטיבי")
-st.write("חלוקה:", "כן" if is_marked(row.get("ריבוי בחלוקה")) else "לא")
-st.write("שלוחות:", "כן" if is_marked(row.get("ריבוי בשלוחות")) else "לא")
+st.write("חלוקה:", "כן" if has_value(row.get("ריבוי בחלוקה")) else "לא")
+st.write("שלוחות:", "כן" if has_value(row.get("ריבוי בשלוחות")) else "לא")
 
 st.subheader("ריבוי מזרעים")
 show_months(get_months(row,"זרעים"))
-st.write("טרי:", "כן" if is_marked(row.get("טרי")) else "לא")
-st.write("יבש:", "כן" if is_marked(row.get("יבש")) else "לא")
+st.write("טרי:", "כן" if has_value(row.get("טרי")) else "לא")
+st.write("יבש:", "כן" if has_value(row.get("יבש")) else "לא")
+if has_value(row.get("טיפול")):
+    st.write("טיפול:",row["טיפול"])
+
 if is_marked(row.get("טיפול")):
     st.write("טיפול:",row["טיפול"])
 
 st.subheader("ריבוי מייחורים")
 show_months(get_months(row,"ייחורים"))
-types=[t for t in ["מעוצה","קודקודי","עשבוני","עלה"] if is_marked(row.get(t))]
+types=[t for t in ["מעוצה","קודקודי","עשבוני","עלה"] if has_value(row.get(t))]
 st.write(" · ".join(types) if types else "—")
 
 def show_value(v):
