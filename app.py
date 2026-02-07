@@ -132,8 +132,8 @@ st.write(" · ".join(tags) if tags else "—")
 
 
 # ===== תכונות מיוחדות =====
-if has_value(row.get("תכונות מיוחדות")):
-    st.caption("תכונות מיוחדות: " + str(row["תכונות מיוחדות"]).strip())
+if has_value(row.get("תכונות מיוחדות/הערות")):
+    st.caption("תכונות מיוחדות/הערות: " + str(row["תכונות מיוחדות/הערות"]).strip())
 
 
 st.subheader("ריבוי וגטטיבי")
@@ -144,8 +144,8 @@ st.subheader("ריבוי מזרעים")
 show_months(get_months(row,"זרעים"))
 st.write("טרי:", "כן" if has_value(row.get("טרי")) else "לא")
 st.write("יבש:", "כן" if has_value(row.get("יבש")) else "לא")
-if has_value(row.get("טיפול")):
-    st.write("טיפול:",row["טיפול"])
+if has_value(row.get("טיפול לפני זריעה")):
+    st.write("טיפול לפני זריעה:",row["טיפול לפני זריעה"])
 
 
 st.subheader("ריבוי מייחורים")
