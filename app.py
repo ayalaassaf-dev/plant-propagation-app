@@ -89,6 +89,63 @@ def show_months(months):
     dots=["●" if i in months else "·" for i in range(1,13)]
     st.code("  ".join(MONTHS_HE)+"\n"+"   ".join(dots))
 
+"""
+קטע שהוספתי כדי שתהיה הבחנה בין סוגי הייחורים הרלבנטים בחודשי השנה
+"""
+
+def parse_cutting_cell(v):
+    """מחזיר סט של סימונים מתוך תא חודש בייחורים: {'*','מ','ק','ע'}"""
+    s = str(v).strip()
+    if s == "":
+        return set()
+    # מנקה רווחים/גרשיים/מפרידים נפוצים
+    s = s.replace(" ", "").replace('"', "").replace("'", "").replace("\\", "").replace("|", "")
+    return set(list(s))  # תומך גם במצב שיש כמה סימנים באותו תא
+
+def get_cuttings_by_type(row, prefix="ייחורים"):
+    """
+    קורא את העמודות 'ייחורים 1'...'ייחורים 12' ומחזיר dict:
+    { 'מעוצה': [חודשים], 'קודקודי': [...], 'עלה': [...] }
+    כוכבית * = כל סוגי הייחורים הרלוונטיים לצמח (לפי העמודות מעוצה/קודקודי/עלה אם קיימות)
+    """
+    # אילו סוגים רלוונטיים לצמח לפי עמודות הסוג (כמו שכבר יש אצלך)
+    relevant_types = []
+    for t in ["מעוצה", "קודקודי", "עלה"]:
+        if has_value(row.get(t)):
+            relevant_types.append(t)
+
+    # אם אין בכלל סימון סוגים בצמח, נניח ש-* אומר "כל הסוגים"
+    if not relevant_types:
+        relevant_types = ["מעוצה", "קודקודי", "עלה"]
+
+    months_by_type = {t: [] for t in relevant_types}
+
+    for i in range(1, 13):
+        col = f"{prefix} {i}"
+        if col not in row:
+            continue
+
+        marks = parse_cutting_cell(row[col])
+        if not marks:
+            continue
+
+        # פירוש סימונים
+        if "*" in marks:
+            for t in relevant_types:
+                months_by_type[t].append(i)
+        if "מ" in marks and "מעוצה" in months_by_type:
+            months_by_type["מעוצה"].append(i)
+        if "ק" in marks and "קודקודי" in months_by_type:
+            months_by_type["קודקודי"].append(i)
+        if "ע" in marks and "עלה" in months_by_type:
+            months_by_type["עלה"].append(i)
+
+    # ניקוי כפילויות ושמירה על סדר
+    for t in months_by_type:
+        months_by_type[t] = sorted(set(months_by_type[t]))
+
+    return months_by_type
+
 
 def is_star_mark(v):
     s = str(v).strip()
@@ -147,11 +204,34 @@ st.write("יבש:", "כן" if has_value(row.get("יבש")) else "לא")
 if has_value(row.get("טיפול לפני זריעה")):
     st.write("טיפול לפני זריעה:",row["טיפול לפני זריעה"])
 
+"""
+קוד ישן של ייחורים
+השארתי כאן רק למקרה שנרצה לחזור אליו
+"""
+
+#st.subheader("ריבוי מייחורים")
+#show_months(get_months(row,"ייחורים"))
+#types=[t for t in ["מעוצה","קודקודי","עשבוני","עלה"] if has_value(row.get(t))]
+#st.write(" · ".join(types) if types else "—")
+
 
 st.subheader("ריבוי מייחורים")
-show_months(get_months(row,"ייחורים"))
-types=[t for t in ["מעוצה","קודקודי","עשבוני","עלה"] if has_value(row.get(t))]
-st.write(" · ".join(types) if types else "—")
+
+# מציג אילו סוגים רלוונטיים לצמח
+types = [t for t in ["מעוצה", "קודקודי", "עלה"] if has_value(row.get(t))]
+st.write("סוגי ייחורים רלוונטיים:", " · ".join(types) if types else "—")
+
+# מציג חודשים לפי סוג, לפי הסימונים בעמודות החודשיות (*/מ/ק/ע)
+months_by_type = get_cuttings_by_type(row, "ייחורים")
+
+st.markdown("**חודשים לפי סוג ייחור:**")
+for t, months in months_by_type.items():
+    st.write(f"{t}:")
+    show_months(months)
+
+
+#סוף ההבלוק החדש במקום הקוד הישן של ייחורים
+
 
 def show_value(v):
     if v is None: return "לא ידוע"
