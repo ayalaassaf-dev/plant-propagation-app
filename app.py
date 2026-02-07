@@ -236,12 +236,37 @@ else:
     st.info("לא ניתן לריבוי משלוחות")
 
 
+# st.subheader("ריבוי מזרעים")
+# show_months(get_months(row,"זרעים"))
+# st.write("טרי:", "כן" if has_value(row.get("טרי")) else "לא")
+# st.write("יבש:", "כן" if has_value(row.get("יבש")) else "לא")
+# if has_value(row.get("טיפול לפני זריעה")):
+#     st.write("טיפול לפני זריעה:",row["טיפול לפני זריעה"])
+
 st.subheader("ריבוי מזרעים")
-show_months(get_months(row,"זרעים"))
-st.write("טרי:", "כן" if has_value(row.get("טרי")) else "לא")
-st.write("יבש:", "כן" if has_value(row.get("יבש")) else "לא")
-if has_value(row.get("טיפול לפני זריעה")):
-    st.write("טיפול לפני זריעה:",row["טיפול לפני זריעה"])
+
+fresh = has_value(row.get("טרי"))
+dry = has_value(row.get("יבש"))
+
+# אם אין בכלל ריבוי מזרעים
+if not fresh and not dry:
+    st.info("לא ניתן לריבוי מזרעים")
+
+else:
+    # חודשים לזריעה
+    show_months(get_months(row, "זרעים"))
+
+    # ניסוח יפה לפי סוג הזרעים
+    if fresh:
+        st.write("סוג זרעים: טריים")
+    elif dry:
+        st.write("סוג זרעים: יבשים")
+
+    # טיפול בזרעים אם קיים
+    if has_value(row.get("טיפול")):
+        st.write("טיפול בזרעים:", row.get("טיפול"))
+
+
 
 # קוד ישן של ייחורים
 #השארתי כאן רק למקרה שנרצה לחזור אליו
