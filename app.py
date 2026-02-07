@@ -60,4 +60,20 @@ st.write("חלוקה:", "כן" if is_marked(row.get("ריבוי בחלוקה")) 
 st.write("שלוחות:", "כן" if is_marked(row.get("ריבוי בשלוחות")) else "—")
 
 st.subheader("ריבוי מזרעים")
-show_months_
+show_months(get_months(row,"זרעים"))
+st.write("טרי:", "כן" if is_marked(row.get("טרי")) else "—")
+st.write("יבש:", "כן" if is_marked(row.get("יבש")) else "—")
+if is_marked(row.get("טיפול")):
+    st.write("טיפול:",row["טיפול"])
+
+st.subheader("ריבוי מייחורים")
+show_months(get_months(row,"ייחורים"))
+types=[t for t in ["מעוצה","קודקודי","עשבוני","עלה"] if is_marked(row.get(t))]
+st.write(" · ".join(types) if types else "—")
+
+st.subheader("תנאי גידול")
+st.write("השקיה:",row.get("השקיה","—"))
+st.write("אור:",row.get("אור","—"))
+st.write("ריח:",row.get("ריח","—"))
+
+st.caption(CREDIT)
