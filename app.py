@@ -89,6 +89,18 @@ def show_months(months):
     dots=["●" if i in months else "·" for i in range(1,13)]
     st.code("  ".join(MONTHS_HE)+"\n"+"   ".join(dots))
 
+
+def is_star_mark(v):
+    s = str(v).strip()
+    return s == "*"
+
+def extract_note(v):
+    s = str(v).strip()
+    # אם ריק או רק כוכבית – אין הערה
+    if s == "" or s == "*":
+        return ""
+    return s
+
 st.title(TITLE)
 st.caption(SUBTITLE)
 
@@ -105,10 +117,24 @@ if not plant:
 row=df[df["שם הצמח"]==plant].iloc[0]
 st.header(plant)
 
+
+# ===== שיוך =====
 st.subheader("שיוך")
-categories=["עץ","שיח","בן שיח","מטפס","עשבוני","מושך חיות","עץ מאכל","ירקות קיץ","ירקות חורף","בצלים ופקעות","תיבול ומרפא"]
-tags=[c for c in categories if c in row and has_value(row[c])]
+
+categories = [
+    "עץ","שיח","בן שיח","מטפס","עשבוני","מושך חיות",
+    "עץ מאכל","ירקות קיץ","ירקות חורף","בצלים ופקעות","תיבול ומרפא"
+]
+
+tags = [c for c in categories if c in row and has_value(row.get(c))]
+
 st.write(" · ".join(tags) if tags else "—")
+
+
+# ===== תכונות מיוחדות =====
+if has_value(row.get("תכונות מיוחדות")):
+    st.caption("תכונות מיוחדות: " + str(row["תכונות מיוחדות"]).strip())
+
 
 st.subheader("ריבוי וגטטיבי")
 st.write("חלוקה:", "כן" if has_value(row.get("ריבוי בחלוקה")) else "לא")
