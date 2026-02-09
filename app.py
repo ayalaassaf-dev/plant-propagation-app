@@ -309,8 +309,16 @@ else:
 
 st.subheader("ריבוי מייחורים")
 
-# סוגי ייחורים שסומנו כרלוונטיים לצמח (אם קיימים בגיליון)
+# # סוגי ייחורים שסומנו כרלוונטיים לצמח (אם קיימים בגיליון)
+# types = [t for t in ["מעוצה", "קודקודי", "עלה"] if has_value(row.get(t))]
+
 types = [t for t in ["מעוצה", "קודקודי", "עלה"] if has_value(row.get(t))]
+
+if types:
+    st.write("סוגי ייחורים רלוונטיים:")
+    for t in types:
+        st.markdown(f"- {t}")
+
 
 # חודשים לפי סוג, לפי הסימונים בעמודות החודשיות (*/מ/ק/ע)
 months_by_type = get_cuttings_by_type(row, "ייחורים")
