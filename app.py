@@ -198,7 +198,12 @@ if not plant:
     st.stop()
 
 row=df[df["שם הצמח"]==plant].iloc[0]
+
 st.header(plant)
+
+# הצגת תמונה אם קיימת
+if has_value(row.get("תמונה")):
+    st.image(row.get("תמונה"), use_container_width=True)
 
 
 # ===== שיוך =====
