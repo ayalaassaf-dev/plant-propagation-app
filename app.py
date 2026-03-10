@@ -400,15 +400,17 @@ else:
             st.write(f"{t}:")
             show_months(months)
 
+
 # =====================================================
 # ===== תנאי גידול ====================================
 # =====================================================
 st.subheader("תנאי גידול")
 
-st.write("השקיה:", show_value(row.get("השקיה")))
-st.write("אור:", show_value(row.get("אור")))
+st.markdown(f"**השקיה:** {show_value(row.get('השקיה'))}")
+st.markdown(f"**אור:** {show_value(row.get('אור'))}")
 
 smell = str(row.get("ריח", "")).strip()
+
 if smell.lower() in ["כן", "ריחני"]:
     smell_text = "ריחני"
 elif smell.lower() in ["לא", "", "none"]:
@@ -416,7 +418,7 @@ elif smell.lower() in ["לא", "", "none"]:
 else:
     smell_text = smell
 
-st.write("ריח:", smell_text)
+st.markdown(f"**ריח:** {smell_text}")
 
 # =====================================================
 # ===== קרדיט סיום ====================================
