@@ -100,16 +100,51 @@ def get_months(row, prefix):
 # =====================================================
 # ===== הצגת טבלת חודשים עם גלילה אופקית ==============
 # =====================================================
-# מציג חודשים בטבלה יציבה של Streamlit עם גלילה ימינה/שמאלה
+# הכותרת ברקע ירוק-מרווה בהיר, והסימונים ממורכזים
+
 def show_months(months):
     month_marks = []
     for i in range(1, 13):
-        month_marks.append("✅" if i in months else "❌")
+        month_marks.append("✓" if i in months else "✗")
 
     df_months = pd.DataFrame([month_marks], columns=MONTHS_HE)
 
+    styled_df = (
+        df_months.style
+        .set_table_styles([
+            {
+                "selector": "th",
+                "props": [
+                    ("background-color", "#dbe8d3"),   # ירוק מרווה בהיר
+                    ("color", "#000000"),              # שחור
+                    ("font-weight", "bold"),
+                    ("text-align", "center"),
+                    ("font-size", "14px"),
+                    ("border", "1px solid #c7d6bf"),
+                    ("padding", "8px"),
+                    ("min-width", "64px")
+                ]
+            },
+            {
+                "selector": "td",
+                "props": [
+                    ("text-align", "center"),
+                    ("vertical-align", "middle"),
+                    ("font-size", "22px"),
+                    ("font-weight", "bold"),
+                    ("border", "1px solid #d9e2d0"),
+                    ("padding", "10px 8px"),
+                    ("height", "44px"),
+                    ("min-width", "64px"),
+                    ("line-height", "1.2")
+                ]
+            }
+        ])
+        .map(lambda v: "color: #16a34a;" if v == "✓" else "color: #dc2626;")
+    )
+
     st.dataframe(
-        df_months,
+        styled_df,
         hide_index=True,
         use_container_width=False
     )
