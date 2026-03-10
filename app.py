@@ -62,7 +62,7 @@ h1, h2, h3 {
 CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGk2pn1I3JZjuhLZbIEWrMfMN02EV_kxuZl2Q3sWxMiRlvLekN-xucADwoy6x9fg/pub?gid=570603705&single=true&output=csv"
 
 TITLE = "כיצד ניתן להרבות צמחים ?"
-SUBTITLE = "מידע ושיטות לריבוי צמחי הגינה והבית"
+SUBTITLE = "מידע ושיטות ל צמחי הגינה והבית"
 CREDIT = "המידע נאסף ע״י בועז שחם · האפליקציה הוכנה ע״י אילה אסף"
 
 MONTHS_HE = ["ינו", "פבר", "מרץ", "אפר", "מאי", "יונ", "יול", "אוג", "ספט", "אוק", "נוב", "דצמ"]
@@ -340,7 +340,9 @@ if has_value(row.get("תכונות מיוחדות/הערות")):
 # =====================================================
 # ריבוי מצמח קיים – באמצעות חלוקה או שלוחות, ללא זרעים
 st.subheader("ריבוי וגטטיבי")
-st.caption("ריבוי מצמח קיים – באמצעות חלוקה או שלוחות, ללא זרעים")
+#st.caption("ריבוי מצמח קיים – באמצעות חלוקה או שלוחות, ללא זרעים")
+st.markdown("<span style='font-size:18px; color:black;'>ריבוי מצמח קיים – באמצעות חלוקה או שלוחות, ללא זרעים)</span>", unsafe_allow_html=True)
+
 
 if has_value(row.get("ריבוי בחלוקה")):
     st.write("חלוקה: כן")
@@ -357,7 +359,9 @@ else:
 # =====================================================
 # זריעה של זרעים בעונה המתאימה לקבלת צמח חדש
 st.subheader("ריבוי מזרעים")
-st.caption("זריעה של זרעים בעונה המתאימה לקבלת צמח חדש")
+#st.caption("זריעה של זרעים בעונה המתאימה לקבלת צמח חדש")
+st.markdown("<span style='font-size:18px; color:black;'>זריעה של זרעים בעונה המתאימה לקבלת צמח חדש)</span>", unsafe_allow_html=True)
+
 
 fresh = has_value(row.get("טרי"))
 dry = has_value(row.get("יבש"))
@@ -382,7 +386,7 @@ else:
 # =====================================================
 # יצירת צמח חדש מחלק של הצמח – ענף, גבעול או עלה
 st.subheader("ריבוי מייחורים")
-st.caption("יצירת צמח חדש מחלק של הצמח – ענף, גבעול או עלה")
+#st.caption("יצירת צמח חדש מחלק של הצמח – ענף, גבעול או עלה")
 st.markdown("<span style='font-size:18px; color:black;'>ריבוי מייחורים = יצירת צמח חדש מחלק של הצמח (ענף / עלה / קודקוד)</span>", unsafe_allow_html=True)
 
 types = [t for t in ["מעוצה", "קודקודי", "עלה"] if has_value(row.get(t))]
