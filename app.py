@@ -341,7 +341,7 @@ if has_value(row.get("תכונות מיוחדות/הערות")):
 # ריבוי מצמח קיים – באמצעות חלוקה או שלוחות, ללא זרעים
 st.subheader("ריבוי וגטטיבי")
 #st.caption("ריבוי מצמח קיים – באמצעות חלוקה או שלוחות, ללא זרעים")
-st.markdown("<span style='font-size:18px; color:black;'>הסבר: ריבוי מצמח קיים באמצעות חלוקה או שלוחות, ללא זרעיםה)</span>", unsafe_allow_html=True)
+st.markdown("<span style='font-size:18px; color:black;'>הסבר: ריבוי מצמח קיים באמצעות חלוקה או שלוחות, ללא זרעים</span>", unsafe_allow_html=True)
 
 
 if has_value(row.get("ריבוי בחלוקה")):
