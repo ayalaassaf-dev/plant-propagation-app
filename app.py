@@ -59,8 +59,8 @@ h1, h2, h3 {
 
 CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGk2pn1I3JZjuhLZbIEWrMfMN02EV_kxuZl2Q3sWxMiRlvLekN-xucADwoy6x9fg/pub?gid=570603705&single=true&output=csv"
 
-TITLE = "טבלת ריבוי צמחים"
-SUBTITLE = "מידע לריבוי צמחי גן ונוי"
+TITLE = "כיצד ניתן להרבות צמחים ?"
+SUBTITLE = "מידע ושיטות לריבוי צמחי הגינה והבית"
 CREDIT = "המידע נאסף ע״י בועז שחם · האפליקציה הוכנה ע״י אילה אסף"
 
 MONTHS_HE = ["ינו","פבר","מרץ","אפר","מאי","יונ","יול","אוג","ספט","אוק","נוב","דצמ"]
@@ -190,7 +190,7 @@ st.caption(SUBTITLE)
 df=load_data()
 df=df[df["שם הצמח"].notna()]
 
-plant=st.selectbox("בחרי צמח",[""]+sorted(df["שם הצמח"].unique()))
+plant=st.selectbox("בחר/י צמח",[""]+sorted(df["שם הצמח"].unique()))
 
 st.caption(CREDIT)
 
