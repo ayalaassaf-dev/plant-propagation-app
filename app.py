@@ -102,67 +102,97 @@ def get_months(row, prefix):
 # =====================================================
 # הכותרת ברקע ירוק-מרווה בהיר, והסימונים ממורכזים
 
+
 def show_months(months):
-    month_marks = []
-    for i in range(1, 13):
-        month_marks.append("✓" if i in months else "✗")
+    header_cells = ""
+    value_cells = ""
 
-    df_months = pd.DataFrame([month_marks], columns=MONTHS_HE)
+    for i, month_name in enumerate(MONTHS_HE, start=1):
+        is_active = i in months
+        sign = "✓" if is_active else "✕"
+        color = "#16a34a" if is_active else "#dc2626"
 
-    styled_df = (
-        df_months.style
-        .set_table_styles([
-            {
-                "selector": "th",
-                "props": [
-                    ("background-color", "#dbe8d3"),   # ירוק מרווה בהיר
-                    ("color", "#000000"),              # שחור
-                    ("font-weight", "bold"),
-                    ("text-align", "center"),
-                    ("font-size", "14px"),
-                    ("border", "1px solid #c7d6bf"),
-                    ("padding", "8px"),
-                    ("min-width", "64px")
-                ]
-            },
-            {
-                "selector": "td",
-                "props": [
-                    ("text-align", "center"),
-                    ("vertical-align", "middle"),
-                    ("font-size", "22px"),
-                    ("font-weight", "bold"),
-                    ("border", "1px solid #d9e2d0"),
-                    ("padding", "10px 8px"),
-                    ("height", "44px"),
-                    ("min-width", "64px"),
-                    ("line-height", "1.2")
-                ]
-            }
-        ])
-        .map(lambda v: "color: #16a34a;" if v == "✓" else "color: #dc2626;")
-    )
+        header_cells += f"""
+        <th>{month_name}</th>
+        """
 
-    st.dataframe(
-        styled_df,
-        hide_index=True,
-        use_container_width=False
-    )
-# =====================================================
-# ===== פענוח סימונים בתאי ייחורים ====================
-# =====================================================
-# הפונקציה קוראת את תוכן תא החודש בעמודות ייחורים
-# ומחזירה אילו סימונים קיימים בו, למשל:
-# * = כל הסוגים
-# מ = מעוצה
-# ק = קודקודי
-# ע = עלה
-def parse_cutting_cell(v):
-    s = str(v).strip()
-    if s == "":
-        return set()
-    s = s.replace(" ", "").replace('"', "").replace("'", "").replace("\\", "").replace("|", "")
-    return set(list(s))
+        value_cells += f"""
+        <td>
+            <div class="mark" style="color:{color};">{sign}</div>
+        </td>
+        """
+
+    html_code = f"""
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <style>
+        body {{
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            font-family: Arial, sans-serif;
+        }}
+
+        .wrap {{
+            width: 100%;
+            overflow-x: auto;
+            padding: 6px 0;
+        }}
+
+        table {{
+            border-collapse: separate;
+            border-spacing: 4px 0;
+            width: max-content;
+            direction: rtl;
+        }}
+
+        th {{
+            background: #cfe3c4;
+            color: #000000;
+            font-size: 15px;
+            font-weight: 700;
+            text-align: center;
+            padding: 10px 8px;
+            border-radius: 10px 10px 0 0;
+            min-width: 68px;
+            border: 1px solid #b8cfab;
+        }}
+
+        td {{
+            background: #ffffff;
+            border: 1px solid #d7dfd0;
+            border-radius: 0 0 10px 10px;
+            min-width: 68px;
+            height: 54px;
+            padding: 0;
+        }}
+
+        .mark {{
+            width: 100%;
+            height: 54px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+        }}
+    </style>
+    </head>
+    <body>
+        <div class="wrap">
+            <table>
+                <tr>{header_cells}</tr>
+                <tr>{value_cells}</tr>
+            </table>
+        </div>
+    </body>
+    </html>
+    """
+
+    components.html(html_code, height=130, scrolling=True)
 
 # =====================================================
 # ===== חישוב חודשים לפי סוג ייחור ====================
