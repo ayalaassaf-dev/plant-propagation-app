@@ -97,75 +97,22 @@ def get_months(row, prefix):
             months.append(i)
     return months
 
-# הפונקציה מציגה חודשי שנה בצורה ברורה גם במצב כהה:
-# לכל חודש מוצג שם החודש, ומתחתיו ✔ ירוק או ✘ אדום
 # =====================================================
 # ===== הצגת טבלת חודשים עם גלילה אופקית ==============
 # =====================================================
-
+# מציג חודשים בטבלה יציבה של Streamlit עם גלילה ימינה/שמאלה
 def show_months(months):
+    month_marks = []
+    for i in range(1, 13):
+        month_marks.append("✅" if i in months else "❌")
 
-    boxes = []
+    df_months = pd.DataFrame([month_marks], columns=MONTHS_HE)
 
-    for i, m in enumerate(MONTHS_HE, start=1):
-
-        if i in months:
-            sign = "✔"
-            color = "#16a34a"
-        else:
-            sign = "✘"
-            color = "#dc2626"
-
-        box = f"""
-        <div style="
-            width:70px;
-            min-width:70px;
-            border:1px solid #cbd5e1;
-            border-radius:8px;
-            padding:6px;
-            text-align:center;
-            background:white;
-        ">
-            <div style="
-                font-size:14px;
-                font-weight:600;
-                color:black;
-                margin-bottom:4px;
-            ">
-                {m}
-            </div>
-
-            <div style="
-                font-size:20px;
-                font-weight:bold;
-                color:{color};
-            ">
-                {sign}
-            </div>
-        </div>
-        """
-
-        boxes.append(box)
-
-    html = f"""
-    <div style="
-        overflow-x:auto;
-        width:100%;
-        padding:4px 0;
-    ">
-        <div style="
-            display:flex;
-            flex-direction:row;
-            gap:6px;
-            width:max-content;
-        ">
-            {''.join(boxes)}
-        </div>
-    </div>
-    """
-
-    st.markdown(html, unsafe_allow_html=True)
-
+    st.dataframe(
+        df_months,
+        hide_index=True,
+        use_container_width=False
+    )
 # =====================================================
 # ===== פענוח סימונים בתאי ייחורים ====================
 # =====================================================
