@@ -2,48 +2,45 @@ import re
 import pandas as pd
 import streamlit as st
 
+# =====================================================
+# ===== הגדרות כלליות של האפליקציה ====================
+# =====================================================
+# כאן מגדירים את שם הדף ואת רוחב הפריסה הבסיסית
 st.set_page_config(page_title="טבלת ריבוי צמחים", layout="centered")
 
+# =====================================================
+# ===== CSS ליישור לימין ולעיצוב עברי =================
+# =====================================================
+# הבלוק הזה דואג לכך שהאפליקציה תוצג נכון בעברית:
+# יישור לימין, כיוון RTL, ועיצוב בסיסי של כותרות ושדות
 st.markdown("""
 <style>
-/* כיוון כתיבה + יישור */
 html, body, .stApp, .main, .block-container {
   direction: rtl !important;
   text-align: right !important;
 }
 
-/* טקסטים וכותרות */
 h1, h2, h3, h4, h5, h6, p, li, div, span, label {
   direction: rtl !important;
   text-align: right !important;
 }
 
-/* שדה בחירה / חיפוש */
 [data-baseweb="select"] * {
   direction: rtl !important;
   text-align: right !important;
 }
 
-/* תיבת טקסט/חיפוש אם תשתמשי בה */
 input, textarea {
   direction: rtl !important;
   text-align: right !important;
 }
-</style>
-""", unsafe_allow_html=True)
 
-
-# ===== עיצוב כללי + עברית =====
-st.markdown("""
-<style>
 html, body, [class*="css"]  {
-    direction: rtl;
-    text-align: right;
     font-family: "Assistant", "Heebo", sans-serif;
 }
 
 .stSelectbox label {
-    text-align:right;
+    text-align: right;
 }
 
 .block-container {
@@ -51,61 +48,80 @@ html, body, [class*="css"]  {
 }
 
 h1, h2, h3 {
-    color:#2f6f3e;
+    color: #2f6f3e;
 }
 </style>
 """, unsafe_allow_html=True)
 
-
+# =====================================================
+# ===== קבועים כלליים של האפליקציה ====================
+# =====================================================
+# כאן מגדירים את מקור הנתונים, הכותרות הקבועות,
+# ואת שמות החודשים שיוצגו בטבלאות
 CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGk2pn1I3JZjuhLZbIEWrMfMN02EV_kxuZl2Q3sWxMiRlvLekN-xucADwoy6x9fg/pub?gid=570603705&single=true&output=csv"
 
 TITLE = "כיצד ניתן להרבות צמחים ?"
 SUBTITLE = "מידע ושיטות לריבוי צמחי הגינה והבית"
 CREDIT = "המידע נאסף ע״י בועז שחם · האפליקציה הוכנה ע״י אילה אסף"
 
-MONTHS_HE = ["ינו","פבר","מרץ","אפר","מאי","יונ","יול","אוג","ספט","אוק","נוב","דצמ"]
+MONTHS_HE = ["ינו", "פבר", "מרץ", "אפר", "מאי", "יונ", "יול", "אוג", "ספט", "אוק", "נוב", "דצמ"]
 
+# =====================================================
+# ===== פונקציית עזר: בדיקה אם לתא יש תוכן ============
+# =====================================================
+# הפונקציה בודקת אם תא מסוים בטבלה אינו ריק
 def has_value(v):
     return str(v).strip() != ""
 
-
+# =====================================================
+# ===== טעינת הנתונים מהגיליון ========================
+# =====================================================
+# הפונקציה קוראת את קובץ ה-CSV מגוגל שיטס,
+# מנקה שמות עמודות ומחליפה ערכי NaN במחרוזת ריקה
 def load_data():
     df = pd.read_csv(CSV_URL)
     df.columns = [str(c).strip() for c in df.columns]
-    df = df.fillna("")   # ← זה גורם לכך שכל NaN יהפוך לתא ריק אמיתי NaN.!
+    df = df.fillna("")
     return df
 
-
+# =====================================================
+# ===== קריאת חודשי פעילות מטבלת החודשים ==============
+# =====================================================
+# הפונקציה מקבלת שורת צמח + תחילית עמודות
+# למשל "זרעים" או "ייחורים", ומחזירה רשימת חודשים פעילים
 def get_months(row, prefix):
-    months=[]
-    for i in range(1,13):
-        col=f"{prefix} {i}"
-        if col in row and has_value(row[col]):
+    months = []
+    for i in range(1, 13):
+        col = f"{prefix} {i}"
+        if col in row.index and has_value(row[col]):
             months.append(i)
     return months
 
-#החלפת פונקצית חודשים כדי שהסימון יהיה קריא יותר 
-
+# =====================================================
+# ===== הצגת טבלת חודשים עם ✔ ו-✘ =====================
+# =====================================================
+# הפונקציה מציגה חודשי שנה בצורה ברורה גם במצב כהה:
+# לכל חודש מוצג שם החודש, ומתחתיו ✔ ירוק או ✘ אדום
 def show_months(months):
-    month_boxes = []
-
+    items = []
     for i, m in enumerate(MONTHS_HE, start=1):
         if i in months:
-            mark = "<div style='color:#16a34a; font-size:22px; font-weight:700;'>✔</div>"
+            sign = "✔"
+            color = "#16a34a"
         else:
-            mark = "<div style='color:#dc2626; font-size:22px; font-weight:700;'>✘</div>"
+            sign = "✘"
+            color = "#dc2626"
 
-        month_boxes.append(f"""
+        items.append(f"""
         <div style="
-            min-width:64px;
-            max-width:64px;
-            flex:0 0 64px;
+            width:62px;
+            min-width:62px;
             border:1px solid #cbd5e1;
             border-radius:10px;
             padding:8px 4px;
             text-align:center;
             background:#ffffff;
-            box-shadow:0 1px 2px rgba(0,0,0,0.08);
+            box-sizing:border-box;
         ">
             <div style="
                 color:#111827;
@@ -113,57 +129,64 @@ def show_months(months):
                 font-weight:600;
                 font-family:Arial, sans-serif;
                 margin-bottom:6px;
-                white-space:nowrap;
+                text-align:center;
+                direction:rtl;
             ">{m}</div>
-            {mark}
+            <div style="
+                color:{color};
+                font-size:20px;
+                font-weight:700;
+                text-align:center;
+            ">{sign}</div>
         </div>
         """)
 
-    st.markdown(f"""
-    <div dir="rtl" style="
+    html_block = f"""
+    <div style="
         width:100%;
         overflow-x:auto;
-        padding:4px 0 8px 0;
+        padding:6px 0 10px 0;
     ">
         <div style="
             display:flex;
-            flex-direction:row;
+            flex-wrap:nowrap;
             gap:8px;
-            min-width:max-content;
+            width:max-content;
+            direction:rtl;
         ">
-            {''.join(month_boxes)}
+            {''.join(items)}
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """
+    st.markdown(html_block, unsafe_allow_html=True)
 
-
-
-# ************************************************************************************
-# קטע שהוספתי כדי שתהיה הבחנה בין סוגי הייחורים הרלבנטים בחודשי השנה
-# ************************************************************************************
-
+# =====================================================
+# ===== פענוח סימונים בתאי ייחורים ====================
+# =====================================================
+# הפונקציה קוראת את תוכן תא החודש בעמודות ייחורים
+# ומחזירה אילו סימונים קיימים בו, למשל:
+# * = כל הסוגים
+# מ = מעוצה
+# ק = קודקודי
+# ע = עלה
 def parse_cutting_cell(v):
-    """מחזיר סט של סימונים מתוך תא חודש בייחורים: {'*','מ','ק','ע'}"""
     s = str(v).strip()
     if s == "":
         return set()
-    # מנקה רווחים/גרשיים/מפרידים נפוצים
     s = s.replace(" ", "").replace('"', "").replace("'", "").replace("\\", "").replace("|", "")
-    return set(list(s))  # תומך גם במצב שיש כמה סימנים באותו תא
+    return set(list(s))
 
+# =====================================================
+# ===== חישוב חודשים לפי סוג ייחור ====================
+# =====================================================
+# הפונקציה מפיקה מילון שבו לכל סוג ייחור
+# יש רשימת חודשים מתאימה
 def get_cuttings_by_type(row, prefix="ייחורים"):
-    """
-    קורא את העמודות 'ייחורים 1'...'ייחורים 12' ומחזיר dict:
-    { 'מעוצה': [חודשים], 'קודקודי': [...], 'עלה': [...] }
-    כוכבית * = כל סוגי הייחורים הרלוונטיים לצמח (לפי העמודות מעוצה/קודקודי/עלה אם קיימות)
-    """
-    # אילו סוגים רלוונטיים לצמח לפי עמודות הסוג (כמו שכבר יש אצלך)
     relevant_types = []
     for t in ["מעוצה", "קודקודי", "עלה"]:
         if has_value(row.get(t)):
             relevant_types.append(t)
 
-    # אם אין בכלל סימון סוגים בצמח, נניח ש-* אומר "כל הסוגים"
     if not relevant_types:
         relevant_types = ["מעוצה", "קודקודי", "עלה"]
 
@@ -171,14 +194,13 @@ def get_cuttings_by_type(row, prefix="ייחורים"):
 
     for i in range(1, 13):
         col = f"{prefix} {i}"
-        if col not in row:
+        if col not in row.index:
             continue
 
         marks = parse_cutting_cell(row[col])
         if not marks:
             continue
 
-        # פירוש סימונים
         if "*" in marks:
             for t in relevant_types:
                 months_by_type[t].append(i)
@@ -189,69 +211,92 @@ def get_cuttings_by_type(row, prefix="ייחורים"):
         if "ע" in marks and "עלה" in months_by_type:
             months_by_type["עלה"].append(i)
 
-    # ניקוי כפילויות ושמירה על סדר
     for t in months_by_type:
         months_by_type[t] = sorted(set(months_by_type[t]))
 
     return months_by_type
 
-
-def is_star_mark(v):
+# =====================================================
+# ===== הצגת ערך טקסטואלי עם ברירת מחדל ===============
+# =====================================================
+# אם תא ריק, הפונקציה תחזיר "לא ידוע"
+def show_value(v):
+    if v is None:
+        return "לא ידוע"
     s = str(v).strip()
-    return s == "*"
+    return s if s else "לא ידוע"
 
-def extract_note(v):
-    s = str(v).strip()
-    # אם ריק או רק כוכבית – אין הערה
-    if s == "" or s == "*":
-        return ""
-    return s
-
+# =====================================================
+# ===== כותרת ראשית וכותרת משנה =======================
+# =====================================================
 st.title(TITLE)
 st.caption(SUBTITLE)
 
-df=load_data()
-df=df[df["שם הצמח"].notna()]
+# =====================================================
+# ===== טעינת הטבלה הראשית ============================
+# =====================================================
+# כאן קוראים את הנתונים מהגיליון ומסננים רק שורות
+# שבהן באמת יש שם צמח
+df = load_data()
+df = df[df["שם הצמח"].astype(str).str.strip() != ""]
 
-plant=st.selectbox("בחר/י צמח",[""]+sorted(df["שם הצמח"].unique()))
+# =====================================================
+# ===== בחירת צמח מתוך הרשימה ==========================
+# =====================================================
+plant = st.selectbox("בחר/י צמח", [""] + sorted(df["שם הצמח"].tolist()))
 
+# =====================================================
+# ===== הצגת קרדיט קבוע ===============================
+# =====================================================
 st.caption(CREDIT)
 
+# =====================================================
+# ===== עצירה אם עוד לא נבחר צמח ======================
+# =====================================================
 if not plant:
     st.stop()
 
-row=df[df["שם הצמח"]==plant].iloc[0]
+# =====================================================
+# ===== שליפת שורת הנתונים של הצמח שנבחר ==============
+# =====================================================
+row = df[df["שם הצמח"] == plant].iloc[0]
 
+# =====================================================
+# ===== כותרת שם הצמח =================================
+# =====================================================
 st.header(plant)
 
-# הצגת תמונה אם קיימת
+# =====================================================
+# ===== הצגת תמונה אם קיימת ===========================
+# =====================================================
 if has_value(row.get("תמונה")):
     st.image(row.get("תמונה"), use_container_width=True)
 
-
-# ===== שיוך =====
+# =====================================================
+# ===== שיוך הצמח (עץ / שיח / מטפס וכו') ==============
+# =====================================================
 st.subheader("שיוך")
 
 categories = [
-    "עץ","שיח","בן שיח","מטפס","עשבוני","מושך חיות",
-    "עץ מאכל","ירקות קיץ","ירקות חורף","בצלים ופקעות","תיבול ומרפא"
+    "עץ", "שיח", "בן שיח", "מטפס", "עשבוני", "מושך חיות",
+    "עץ מאכל", "ירקות קיץ", "ירקות חורף", "בצלים ופקעות", "תיבול ומרפא"
 ]
 
-tags = [c for c in categories if c in row and has_value(row.get(c))]
-
+tags = [c for c in categories if c in row.index and has_value(row.get(c))]
 st.write(" · ".join(tags) if tags else "—")
 
-
-# ===== תכונות מיוחדות =====
+# =====================================================
+# ===== תכונות מיוחדות / הערות ========================
+# =====================================================
 if has_value(row.get("תכונות מיוחדות/הערות")):
     st.caption("תכונות מיוחדות/הערות: " + str(row["תכונות מיוחדות/הערות"]).strip())
 
-
-# st.subheader("ריבוי וגטטיבי")
-# st.write("חלוקה:", "כן" if has_value(row.get("ריבוי בחלוקה")) else "לא")
-# st.write("שלוחות:", "כן" if has_value(row.get("ריבוי בשלוחות")) else "לא")
-
+# =====================================================
+# ===== ריבוי וגטטיבי =================================
+# =====================================================
+# ריבוי מצמח קיים – באמצעות חלוקה או שלוחות, ללא זרעים
 st.subheader("ריבוי וגטטיבי")
+st.caption("ריבוי מצמח קיים – באמצעות חלוקה או שלוחות, ללא זרעים")
 
 if has_value(row.get("ריבוי בחלוקה")):
     st.write("חלוקה: כן")
@@ -263,115 +308,72 @@ if has_value(row.get("ריבוי בשלוחות")):
 else:
     st.info("לא ניתן לריבוי משלוחות")
 
-
-# st.subheader("ריבוי מזרעים")
-# show_months(get_months(row,"זרעים"))
-# st.write("טרי:", "כן" if has_value(row.get("טרי")) else "לא")
-# st.write("יבש:", "כן" if has_value(row.get("יבש")) else "לא")
-# if has_value(row.get("טיפול לפני זריעה")):
-#     st.write("טיפול לפני זריעה:",row["טיפול לפני זריעה"])
-
+# =====================================================
+# ===== ריבוי מזרעים ==================================
+# =====================================================
+# זריעה של זרעים בעונה המתאימה לקבלת צמח חדש
 st.subheader("ריבוי מזרעים")
+st.caption("זריעה של זרעים בעונה המתאימה לקבלת צמח חדש")
 
 fresh = has_value(row.get("טרי"))
 dry = has_value(row.get("יבש"))
 
-# אם אין בכלל ריבוי מזרעים
 if not fresh and not dry:
     st.info("לא ניתן לריבוי מזרעים")
-
 else:
-    # חודשים לזריעה
     show_months(get_months(row, "זרעים"))
 
-    # ניסוח יפה לפי סוג הזרעים
     if fresh:
         st.write("סוג זרעים: טריים")
     elif dry:
         st.write("סוג זרעים: יבשים")
 
-    # טיפול בזרעים אם קיים
     if has_value(row.get("טיפול")):
         st.write("טיפול בזרעים:", row.get("טיפול"))
+    else:
+        st.write("טיפול בזרעים: אין צורך - פשוט לזרוע")
 
-
-
-# קוד ישן של ייחורים
-#השארתי כאן רק למקרה שנרצה לחזור אליו
-
-
-#st.subheader("ריבוי מייחורים")
-#show_months(get_months(row,"ייחורים"))
-#types=[t for t in ["מעוצה","קודקודי","עשבוני","עלה"] if has_value(row.get(t))]
-#st.write(" · ".join(types) if types else "—")
-
-
-# st.subheader("ריבוי מייחורים")
-
-# # מציג אילו סוגים רלוונטיים לצמח
-# types = [t for t in ["מעוצה", "קודקודי", "עלה"] if has_value(row.get(t))]
-# st.write("סוגי ייחורים רלוונטיים:", " · ".join(types) if types else "—")
-
-# # מציג חודשים לפי סוג, לפי הסימונים בעמודות החודשיות (*/מ/ק/ע)
-# months_by_type = get_cuttings_by_type(row, "ייחורים")
-
-# #st.markdown("**חודשים לפי סוג ייחור:**")
-# #for t, months in months_by_type.items():
-#  #   st.write(f"{t}:")
-#  #   show_months(months)
-
-# # אם אין בכלל חודשים לשום סוג – נכתוב הודעה
-# if not any(months for months in months_by_type.values()):
-#     st.info("לא ניתן לריבוי מייחורים")
-# else:
-#     st.markdown("**חודשים לפי סוג ייחור:**")
-#     for t, months in months_by_type.items():
-#         if months:  # מציגים רק סוגים שבאמת יש להם חודשים
-#             st.write(f"{t}:")
-#             show_months(months)
-
+# =====================================================
+# ===== ריבוי מייחורים ================================
+# =====================================================
+# יצירת צמח חדש מחלק של הצמח – ענף, גבעול או עלה
 st.subheader("ריבוי מייחורים")
-
-# # סוגי ייחורים שסומנו כרלוונטיים לצמח (אם קיימים בגיליון)
-# types = [t for t in ["מעוצה", "קודקודי", "עלה"] if has_value(row.get(t))]
+st.caption("יצירת צמח חדש מחלק של הצמח – ענף, גבעול או עלה")
 
 types = [t for t in ["מעוצה", "קודקודי", "עלה"] if has_value(row.get(t))]
-
-if types:
-    st.write("סוגי ייחורים רלוונטיים:")
-    for t in types:
-        st.markdown(f"- {t}")
-
-
-# חודשים לפי סוג, לפי הסימונים בעמודות החודשיות (*/מ/ק/ע)
 months_by_type = get_cuttings_by_type(row, "ייחורים")
 
-# אם אין בכלל חודשים לשום סוג – נכתוב הודעה
 if not any(months for months in months_by_type.values()):
     st.info("לא ניתן לריבוי מייחורים")
 else:
-    # מציגים שורת סוגים רק אם באמת יש רשימה (בלי קו)
     if types:
         st.write("סוגי ייחורים רלוונטיים:", " · ".join(types))
 
     st.markdown("**חודשים לפי סוג ייחור:**")
     for t, months in months_by_type.items():
-        if months:  # מציגים רק סוגים שבאמת יש להם חודשים
+        if months:
             st.write(f"{t}:")
             show_months(months)
 
-
-#סוף הבלוק החדש במקום הקוד הישן של ייחורים
-
-
-def show_value(v):
-    if v is None: return "לא ידוע"
-    s=str(v).strip()
-    return s if s else "לא ידוע"
+# =====================================================
+# ===== תנאי גידול ====================================
+# =====================================================
+st.subheader("תנאי גידול")
 
 st.write("השקיה:", show_value(row.get("השקיה")))
 st.write("אור:", show_value(row.get("אור")))
-st.write("ריח:", show_value(row.get("ריח")))
 
+smell = str(row.get("ריח", "")).strip()
+if smell.lower() in ["כן", "ריחני"]:
+    smell_text = "ריחני"
+elif smell.lower() in ["לא", "", "none"]:
+    smell_text = "נטול ריח"
+else:
+    smell_text = smell
 
+st.write("ריח:", smell_text)
+
+# =====================================================
+# ===== קרדיט סיום ====================================
+# =====================================================
 st.caption(CREDIT)
