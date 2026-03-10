@@ -341,7 +341,7 @@ if has_value(row.get("תכונות מיוחדות/הערות")):
 # ריבוי מצמח קיים – באמצעות חלוקה או שלוחות, ללא זרעים
 st.subheader("ריבוי וגטטיבי")
 #st.caption("ריבוי מצמח קיים – באמצעות חלוקה או שלוחות, ללא זרעים")
-st.markdown("<span style='font-size:18px; color:black;'>ריבוי מצמח קיים – באמצעות חלוקה או שלוחות, ללא זרעים)</span>", unsafe_allow_html=True)
+st.markdown("<span style='font-size:18px; color:black;'>הסבר: ריבוי מצמח קיים באמצעות חלוקה או שלוחות, ללא זרעיםה)</span>", unsafe_allow_html=True)
 
 
 if has_value(row.get("ריבוי בחלוקה")):
@@ -360,7 +360,7 @@ else:
 # זריעה של זרעים בעונה המתאימה לקבלת צמח חדש
 st.subheader("ריבוי מזרעים")
 #st.caption("זריעה של זרעים בעונה המתאימה לקבלת צמח חדש")
-st.markdown("<span style='font-size:18px; color:black;'>זריעה של זרעים בעונה המתאימה לקבלת צמח חדש)</span>", unsafe_allow_html=True)
+st.markdown("<span style='font-size:18px; color:black;'>הסבר: זריעה של זרעים בעונה המתאימה לקבלת צמח חדש)</span>", unsafe_allow_html=True)
 
 
 fresh = has_value(row.get("טרי"))
@@ -387,7 +387,7 @@ else:
 # יצירת צמח חדש מחלק של הצמח – ענף, גבעול או עלה
 st.subheader("ריבוי מייחורים")
 #st.caption("יצירת צמח חדש מחלק של הצמח – ענף, גבעול או עלה")
-st.markdown("<span style='font-size:18px; color:black;'>ריבוי מייחורים = יצירת צמח חדש מחלק של הצמח (ענף / עלה / קודקוד)</span>", unsafe_allow_html=True)
+st.markdown("<span style='font-size:18px; color:black;'>הסבר: יצירת צמח חדש מחלק של הצמח (ענף / עלה / קודקוד)</span>", unsafe_allow_html=True)
 
 types = [t for t in ["מעוצה", "קודקודי", "עלה"] if has_value(row.get(t))]
 months_by_type = get_cuttings_by_type(row, "ייחורים")
