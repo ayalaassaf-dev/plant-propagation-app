@@ -97,14 +97,18 @@ def get_months(row, prefix):
             months.append(i)
     return months
 
-# =====================================================
-# ===== הצגת טבלת חודשים עם ✔ ו-✘ =====================
-# =====================================================
 # הפונקציה מציגה חודשי שנה בצורה ברורה גם במצב כהה:
 # לכל חודש מוצג שם החודש, ומתחתיו ✔ ירוק או ✘ אדום
+# =====================================================
+# ===== הצגת טבלת חודשים עם גלילה אופקית ==============
+# =====================================================
+
 def show_months(months):
-    items = []
+
+    boxes = []
+
     for i, m in enumerate(MONTHS_HE, start=1):
+
         if i in months:
             sign = "✔"
             color = "#16a34a"
@@ -112,53 +116,55 @@ def show_months(months):
             sign = "✘"
             color = "#dc2626"
 
-        items.append(f"""
+        box = f"""
         <div style="
-            width:62px;
-            min-width:62px;
+            width:70px;
+            min-width:70px;
             border:1px solid #cbd5e1;
-            border-radius:10px;
-            padding:8px 4px;
+            border-radius:8px;
+            padding:6px;
             text-align:center;
-            background:#ffffff;
-            box-sizing:border-box;
+            background:white;
         ">
             <div style="
-                color:#111827;
-                font-size:13px;
+                font-size:14px;
                 font-weight:600;
-                font-family:Arial, sans-serif;
-                margin-bottom:6px;
-                text-align:center;
-                direction:rtl;
-            ">{m}</div>
-            <div style="
-                color:{color};
-                font-size:20px;
-                font-weight:700;
-                text-align:center;
-            ">{sign}</div>
-        </div>
-        """)
+                color:black;
+                margin-bottom:4px;
+            ">
+                {m}
+            </div>
 
-    html_block = f"""
+            <div style="
+                font-size:20px;
+                font-weight:bold;
+                color:{color};
+            ">
+                {sign}
+            </div>
+        </div>
+        """
+
+        boxes.append(box)
+
+    html = f"""
     <div style="
-        width:100%;
         overflow-x:auto;
-        padding:6px 0 10px 0;
+        width:100%;
+        padding:4px 0;
     ">
         <div style="
             display:flex;
-            flex-wrap:nowrap;
-            gap:8px;
+            flex-direction:row;
+            gap:6px;
             width:max-content;
-            direction:rtl;
         ">
-            {''.join(items)}
+            {''.join(boxes)}
         </div>
     </div>
     """
-    st.markdown(html_block, unsafe_allow_html=True)
+
+    st.markdown(html, unsafe_allow_html=True)
 
 # =====================================================
 # ===== פענוח סימונים בתאי ייחורים ====================
