@@ -383,6 +383,7 @@ else:
 # יצירת צמח חדש מחלק של הצמח – ענף, גבעול או עלה
 st.subheader("ריבוי מייחורים")
 st.caption("יצירת צמח חדש מחלק של הצמח – ענף, גבעול או עלה")
+st.markdown("<span style='font-size:18px; color:black;'>ריבוי מייחורים = יצירת צמח חדש מחלק של הצמח (ענף / עלה / קודקוד)</span>", unsafe_allow_html=True)
 
 types = [t for t in ["מעוצה", "קודקודי", "עלה"] if has_value(row.get(t))]
 months_by_type = get_cuttings_by_type(row, "ייחורים")
@@ -391,7 +392,7 @@ if not any(months for months in months_by_type.values()):
     st.info("לא ניתן לריבוי מייחורים")
 else:
     if types:
-        st.write("סוגי ייחורים רלוונטיים:", " · ".join(types))
+      st.markdown("**סוגי ייחורים רלוונטיים:** " + " · ".join(types))
 
     st.markdown("**חודשים לפי סוג ייחור:**")
     for t, months in months_by_type.items():
