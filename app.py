@@ -87,33 +87,56 @@ def get_months(row, prefix):
 #החלפת פונקצית חודשים כדי שהסימון יהיה קריא יותר 
 
 def show_months(months):
-    symbols = ["✔" if i in months else "✖" for i in range(1, 13)]
+    month_boxes = []
 
-    header = "".join([
-        f"<th style='border:1px solid #ccc; padding:6px 8px; text-align:center; background:#f7f7f7;'>{m}</th>"
-        for m in MONTHS_HE
-    ])
+    for i, m in enumerate(MONTHS_HE, start=1):
+        if i in months:
+            mark = "<div style='color:#16a34a; font-size:22px; font-weight:700;'>✔</div>"
+        else:
+            mark = "<div style='color:#dc2626; font-size:22px; font-weight:700;'>✘</div>"
 
-    row = "".join([
-        f"<td style='border:1px solid #ccc; padding:6px 8px; text-align:center; font-size:18px;"
-        f" color:{'#2f9e44' if s=='✔' else '#e03131'};'>{s}</td>"
-        for s in symbols
-    ])
+        month_boxes.append(f"""
+        <div style="
+            min-width:64px;
+            max-width:64px;
+            flex:0 0 64px;
+            border:1px solid #cbd5e1;
+            border-radius:10px;
+            padding:8px 4px;
+            text-align:center;
+            background:#ffffff;
+            box-shadow:0 1px 2px rgba(0,0,0,0.08);
+        ">
+            <div style="
+                color:#111827;
+                font-size:13px;
+                font-weight:600;
+                font-family:Arial, sans-serif;
+                margin-bottom:6px;
+                white-space:nowrap;
+            ">{m}</div>
+            {mark}
+        </div>
+        """)
 
     st.markdown(f"""
-    <div dir="rtl" style="width:100%; overflow-x:auto;">
-      <table style="border-collapse:collapse; margin-top:6px;">
-        <tr>{header}</tr>
-        <tr>{row}</tr>
-      </table>
+    <div dir="rtl" style="
+        width:100%;
+        overflow-x:auto;
+        padding:4px 0 8px 0;
+    ">
+        <div style="
+            display:flex;
+            flex-direction:row;
+            gap:8px;
+            min-width:max-content;
+        ">
+            {''.join(month_boxes)}
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
 
-
-#def show_months(months):
-#    dots=["●" if i in months else "·" for i in range(1,13)]
-#    st.code("  ".join(MONTHS_HE)+"\n"+"   ".join(dots))
 
 # ************************************************************************************
 # קטע שהוספתי כדי שתהיה הבחנה בין סוגי הייחורים הרלבנטים בחודשי השנה
