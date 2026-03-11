@@ -360,9 +360,9 @@ else:
 # זריעה של זרעים בעונה המתאימה לקבלת צמח חדש
 st.subheader("ריבוי מזרעים")
 #st.caption("זריעה של זרעים בעונה המתאימה לקבלת צמח חדש")
-st.markdown("<span style='font-size:18px; color:black;'>הסבר: זריעה של זרעים בעונה המתאימה לקבלת צמח חדש)</span>", unsafe_allow_html=True)
+#st.markdown("<span style='font-size:18px; color:black;'>הסבר: זריעה של זרעים בעונה המתאימה לקבלת צמח חדש)</span>", unsafe_allow_html=True)
 st.markdown(
-    "<div style='color:black; font-size:16px;'>ריבוי מצמח קיים – באמצעות חלוקה או שלוחות, ללא זרעים</div>",
+    "<span style='font-size:18px; color:inherit;'>הסבר: זריעה של זרעים בעונה המתאימה לקבלת צמח חדש</span>",
     unsafe_allow_html=True
 )
 
